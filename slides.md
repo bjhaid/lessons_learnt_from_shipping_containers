@@ -48,6 +48,7 @@ ___
 ___
 
 ### Minimal dockerfile/image tree
+<pre>
 
                                          wheezy-base
                                              |
@@ -65,6 +66,8 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
                                       a       b        c        d   i-base         e        f       g       h
                                                                       |
                                                                       i
+
+</pre>
 ___
 
 ### Flow
