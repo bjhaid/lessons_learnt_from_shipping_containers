@@ -138,6 +138,11 @@ ___
 
 ### What I wish we knew
 
+- Docker will create a directory as root if you specify a host directory as volume and the directory doesn't exist
+![docker_volume_create_as_root.gif](docker_volume_create_as_root.gif)
+
+___
+
 - Ensure UID/GID of user running docker is consistent with the user in the container
 - `docker rm container` does not remove volumes, `docker rm -v container`
-- `docker-compose rm` does not rm primary service
+- `docker-compose rm` does not rm primary service (look for issue showing this)
