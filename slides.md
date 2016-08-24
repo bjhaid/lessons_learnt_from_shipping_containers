@@ -1,34 +1,48 @@
+build-lists: true
 # Lessons learnt from "Shipping" containers.
 
 Abejide Ayodele
 bjhaid (twitter, github)
 
-___
+---
 
 ### Problems
 
 - Builds were too slow (feedback cycle for developers was too long)
 - Builds sometimes were not easily reproduceable between dev environment and Jenkins
+- Host where builds ran were mutated by builds and their dependencies
 
-![incorrect_java_version.png](incorrect_java_version.png)
+---
 
-![postgres_not_running.png](postgres_not_running.png)
+![fit](incorrect_java_version.png)
 
-![postgres_not_running2.png](postgres_not_running2.png)
+---
 
-___
+![fit](postgres_not_running.png)
+
+---
+
+![fit](postgres_not_running2.png)
+
+---
 
 ### Core Objectives
 
 - Make builds faster
 - Make builds reproduceable
+- Make builds _host agnostic_
 
-___
+---
 
 ### The Quest
 
-; some anime/gif on discovery of docker
-___
+![](quest.gif)
+
+---
+
+![fit](docker_logo.png)
+
+---
 
 ### A brief about Docker niceities
 
@@ -39,16 +53,16 @@ ___
 - Shareable
 - Widely adopted (big community)
 
-___
+---
 
 ### Putting docker to use
 
 - We heavily exploited docker's image/dockerfile inheritance. (note keep related non-moving portions in base images)
 
-___
+---
 
 ### Minimal dockerfile/image tree
-<pre>
+```
 
                                          wheezy-base
                                              |
@@ -67,49 +81,56 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
                                                                       |
                                                                       i
 
-</pre>
-___
-
+```
+---
 ### Flow
 - Build an image
 - Run tests
 - Tag image with project name and current git sha
 - Seed database
 - Tag database image with project name and md5sum of migration and seed files
-- Push image
+
+---
+
+### Flow
+
+- Commit project and database image
+- Push project and database image
 - Trigger parameterized build of downstream builds passing the SHA through to them
 
-___
-
-### Early results
-- Builds were amazingly faster
-
-___
-![graph.png](graph.png)
-
-___
+---
 
 ### Early results
 - Builds were reproduceable
-- Objectives achieved but...
+- Builds were faster
 
-___
+---
 
-;Some image of a daisy chain/duct taped things
+![fit](graph.png)
 
-___
+---
+
+Objectives achieved but...
+
+---
+
+### It came with other problems
 
 - We were daisy-chaining Makefiles, bash files and docker-compose files
 - Duplicating things across docker compose/Makefiles
 - Which will be a bad UX for developers
 
-___
+---
+
+![fit](duct-tape.JPG)
+
+---
 
 ### New Objective
 
 - Replace the daisy chain with something better
 
-___
+---
 
 ### A DSL to replace compose files and Makefiles
 
@@ -118,34 +139,93 @@ ___
 - Extendable in Ruby
 - Reduced/_Removed_ duplication
 
-___
+---
 
-![application.png](application.png)
+```ruby
+service :postgres do
+  image "hub.braintree.com/bt/postgres:custom"
+end
 
-___
+service :sample_app do
+  image hub.braintree.com/bt/jenkins-grove-sample:master
+end
 
-![s_integration_drakefile.png](s_integration_drakefile.png)
+job :test => [:sample_app, :postgres] do
+  compose = sample_app
+    .link(:sample_app_db, postgres)
+    .env("POSTGRES_HOST", "sample_app_db")
+    .env("POSTGRES_PORT", "5433")
+    .command("rake")
+    .compose
 
-___
+  compose.run
+end
+```
 
-- 221 lines of compose
+---
 
-![s_compose_yml.png](s_compose_yml.png)
+```yaml
+sample_app:
+  command: "rake"
+  environment:
+    - DRAKE_HOST_USER_ID=1000
+    - POSTGRES_HOST=sample_app_db
+    - POSTGRES_PORT=5433
+  image: hub.braintree.com/bt/jenkins-grove-sample:master
+  links:
+    - postgres:sample_app_db
+postgres:
+  environment:
+    - DRAKE_HOST_USER_ID=1000
+  image: hub.braintree.com/bt/postgres:custom
+```
 
-___
+---
 
-### An example graph showing a build with links
-![s.png](s.png)
+221 lines of compose
 
-___
+![inline fit](s_compose_yml.png)
 
-### What I wish we knew
+---
+
+### A graph showing build S with links
+
+![inline fit](s.png)
+
+---
+
+![fit](surprised-emoji.png)
+
+---
 
 - Docker will create a directory as root if you specify a host directory as volume and the directory doesn't exist
+
+---
+
 ![docker_volume_create_as_root.gif](docker_volume_create_as_root.gif)
 
-___
+^ Ensure UID/GID of user running docker is consistent with the user in the container
 
-- Ensure UID/GID of user running docker is consistent with the user in the container
-- `docker rm container` does not remove volumes, `docker rm -v container`
-- `docker-compose rm` does not rm primary service (look for issue showing this)
+---
+
+![fit](set_umask.png)
+
+---
+
+- `docker-compose rm` or `docker-compose stop` does not rm primary service (look for issue showing this)
+---
+```yaml
+foo:
+  command: "/bin/bash -c 'sleep 1h'"
+  environment:
+    - REDIS_HOST=redis
+  image: debian:wheezy
+  links:
+    - redis
+  volumes:
+    - /home/pair/bt/jumpman:/home/bt
+redis:
+  image: redis
+```
+---
+
