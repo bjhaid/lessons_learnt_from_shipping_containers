@@ -289,6 +289,20 @@ redis:
 
 ---
 
+![fit](sad-emoji.png)
+
+---
+
+### Transient docker networking problems correlating with preloading our VMs/AMIs with loads of docker images.
+
+---
+
+### Random kernel crashes (xen/docker/linux related)
+
+^ compiling and running an aufs patched linx 3.18.36 made the problems disappear
+
+---
+
 ### Shoutouts
 
 - James
