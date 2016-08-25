@@ -57,7 +57,9 @@ bjhaid (twitter, github)
 
 ### Putting docker to use
 
-- We heavily exploited docker's image/dockerfile inheritance. (note keep related non-moving portions in base images)
+- We heavily exploited docker's image/dockerfile inheritance. 
+
+^ note keep related non-moving portions in base images
 
 ---
 
@@ -82,6 +84,7 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
                                                                       i
 
 ```
+
 ---
 ### Flow
 - Build an image
