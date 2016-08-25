@@ -57,7 +57,7 @@ bjhaid (twitter, github)
 
 ### Putting docker to use
 
-- We heavily exploited docker's image/dockerfile inheritance. 
+- We heavily exploited docker's image/dockerfile inheritance.
 
 ^ note keep related non-moving portions in base images
 
@@ -84,7 +84,6 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
                                                                       i
 
 ```
-
 ---
 ### Flow
 - Build an image
@@ -160,7 +159,7 @@ job :test => [:sample_app, :postgres] do
     .env("POSTGRES_PORT", "5433")
     .command("rake")
     .compose
-  compose.run
+    .run
 end
 ```
 
@@ -185,22 +184,22 @@ postgres:
 ---
 
 ```ruby
-application :sample_app do                                         
-  local_path "../sample_app"                             
-  remote "github.com:braintree/sample_app.git"                     
-  revision "final"                                                 
-end                                                                
-service :foo do                                                    
-  image "hub.braintree.com/bt/foo:master"                          
-end                                                                
+application :sample_app do
+  local_path "../sample_app"
+  remote "github.com:braintree/sample_app.git"
+  revision "final"
+end
+service :foo do
+  image "hub.braintree.com/bt/foo:master"
+end
 job :test => ["sample_app:sample_app", "sample_app:postgres", :foo]
-  compose = foo                                                    
-    .link(:sample_app, sample_app[:sample_app])                    
-    .link(:postgres, sample_app[:postgres])                        
+  compose = foo
+    .link(:sample_app, sample_app[:sample_app])
+    .link(:postgres, sample_app[:postgres])
     .command("rake")
-    .compose                                                       
-  compose.run
-end                                                                
+    .compose
+    .run
+end
 ```
 
 ---
@@ -256,7 +255,7 @@ postgres:
 
 Ensure UID/GID of user running docker daemon (docker-compose) is consistent with the user in the container
 
-                             OR         
+                             OR
 
 ```bash
 groupadd docker -g 918 \
