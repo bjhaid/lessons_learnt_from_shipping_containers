@@ -153,7 +153,7 @@ service :sample_app do
   image hub.braintree.com/bt/sample_app:master
 end
 job :test => [:sample_app, :postgres] do
-  compose = sample_app
+  sample_app
     .link(:sample_app_db, postgres)
     .env("POSTGRES_HOST", "sample_app_db")
     .env("POSTGRES_PORT", "5433")
@@ -193,7 +193,7 @@ service :foo do
   image "hub.braintree.com/bt/foo:master"
 end
 job :test => ["sample_app:sample_app", "sample_app:postgres", :foo]
-  compose = foo
+  foo
     .link(:sample_app, sample_app[:sample_app])
     .link(:postgres, sample_app[:postgres])
     .command("rake")
