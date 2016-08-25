@@ -106,7 +106,9 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
 
 ---
 
-![fit](graph.png)
+### Successful builds on New(green) vs Old(red) CI (small is better)
+
+![inline](graph.png)
 
 ---
 
@@ -145,11 +147,9 @@ Objectives achieved but...
 service :postgres do
   image "hub.braintree.com/bt/postgres:custom"
 end
-
 service :sample_app do
-  image hub.braintree.com/bt/jenkins-grove-sample:master
+  image hub.braintree.com/bt/sample_app:master
 end
-
 job :test => [:sample_app, :postgres] do
   compose = sample_app
     .link(:sample_app_db, postgres)
@@ -157,7 +157,6 @@ job :test => [:sample_app, :postgres] do
     .env("POSTGRES_PORT", "5433")
     .command("rake")
     .compose
-
   compose.run
 end
 ```
@@ -171,7 +170,7 @@ sample_app:
     - DRAKE_HOST_USER_ID=1000
     - POSTGRES_HOST=sample_app_db
     - POSTGRES_PORT=5433
-  image: hub.braintree.com/bt/jenkins-grove-sample:master
+  image: hub.braintree.com/bt/sample_app:master
   links:
     - postgres:sample_app_db
 postgres:
@@ -182,15 +181,59 @@ postgres:
 
 ---
 
-221 lines of compose
-
-![inline fit](s_compose_yml.png)
+```ruby
+application :sample_app do                                         
+  local_path "../sample_app"                             
+  remote "github.com:braintree/sample_app.git"                     
+  revision "final"                                                 
+end                                                                
+service :foo do                                                    
+  image "hub.braintree.com/bt/foo:master"                          
+end                                                                
+job :test => ["sample_app:sample_app", "sample_app:postgres", :foo]
+  compose = foo                                                    
+    .link(:sample_app, sample_app[:sample_app])                    
+    .link(:postgres, sample_app[:postgres])                        
+    .command("rake")
+    .compose                                                       
+  compose.run
+end                                                                
+```
 
 ---
 
-### A graph showing build S with links
+```yaml
+foo:
+  command: "rake"
+  environment:
+    - DRAKE_HOST_USER_ID=1000
+  image: hub.braintree.com/bt/foo:master
+  links:
+    - sample_app
+    - postgres
+sample_app:
+  environment:
+    - DRAKE_HOST_USER_ID=1000
+  image: dockerhub.braintree.tools/bt/jenkins-grove-sample:87fbed05576406a2098fe8b173e62d578c6e7329
+postgres:
+  environment:
+    - DRAKE_HOST_USER_ID=1000
+  image: dockerhub.braintree.tools/bt/postgres:custom
+```
 
-![inline fit](s.png)
+---
+
+![fit](s_integration_drakefile.png)
+
+---
+
+^ 221 lines of compose
+
+![fit](s_compose_yml.png)
+
+---
+
+![fit](s.png)
 
 ---
 
@@ -204,15 +247,28 @@ postgres:
 
 ![docker_volume_create_as_root.gif](docker_volume_create_as_root.gif)
 
-^ Ensure UID/GID of user running docker is consistent with the user in the container
+---
 
+## Tip
+
+Ensure UID/GID of user running docker daemon (docker-compose) is consistent with the user in the container
+
+                             OR         
+
+```bash
+groupadd docker -g 918 \
+&& sed -i "s#root:x:0:0:root:/root:/bin/bash#root:x:0:918:root:/root:/bin/bash#g" /etc/passwd
+```
+```yaml
+command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.create, ecto.migrate, test'"
+```
 ---
 
 ![fit](set_umask.png)
 
 ---
 
-- `docker-compose rm` or `docker-compose stop` does not rm primary service (look for issue showing this)
+`docker-compose rm` or `docker-compose stop` does not rm primary service (look for issue showing this)
 ---
 ```yaml
 foo:
@@ -229,3 +285,17 @@ redis:
 ```
 ---
 
+![fit](docker_compose_not_stopping_root_container.gif)
+
+---
+
+### Shoutouts
+
+- James
+- Jaron
+- Jeff
+- Kevin
+
+---
+
+### Come work @ Braintree
