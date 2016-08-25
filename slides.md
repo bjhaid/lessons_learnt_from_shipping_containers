@@ -268,7 +268,9 @@ command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.crea
 ---
 
 `docker-compose rm` or `docker-compose stop` does not rm primary service
+
 ---
+
 ```yaml
 foo:
   command: "/bin/bash -c 'sleep 1h'"
