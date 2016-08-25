@@ -262,9 +262,6 @@ groupadd docker -g 918 \
 ```yaml
 command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.create, ecto.migrate, test'"
 ```
----
-
-![fit](set_umask.png)
 
 ---
 
