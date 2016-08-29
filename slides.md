@@ -59,8 +59,6 @@ bjhaid (twitter, github)
 
 - We heavily exploited docker's image/dockerfile inheritance.
 
-^ note keep related non-moving portions in base images
-
 ---
 
 ### Minimal dockerfile/image tree
@@ -84,19 +82,46 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
                                                                       i
 
 ```
+
+^ note keep related non-moving portions in base images
+
+---
+
+### Docker Registry Architecture
+
+```
+
+                                               AWS S3
+                                                  |
+                    -----------------------------------------------------------
+                    |                                                         |
+                EC2 Registry                                                HaProxy
+                    |                                                         |
+     _   _   _   _   _   _   _                          --------------------------------------------
+    |=| |=| |=| |=| |=| |=| |=|                         |                                          |
+    |_| |_| |_| |_| |_| |_| |_|                       Nginx                                      Nginx
+           EC2 WORKERS                                  |                                          |
+                                                    Registry                                   Registry
+                                                        |                                          |
+                                                     -------------------------------------------------------
+                                                     \_  \_  \_  \_  \_  \_  \_   \_  \_  \_  \_  \_  \_  \_
+                                                     |=| |=| |=| |=| |=| |=| |=|  |=| |=| |=| |=| |=| |=| |=|
+                                                     |_| |_| |_| |_| |_| |_| |_|  |_| |_| |_| |_| |_| |_| |_|
+                                                                          PHYSICAL DC WORKERS
+```
 ---
 ### Flow
 - Build an image
 - Run tests
-- Tag image with project name and current git sha
 - Seed database
-- Tag database image with project name and md5sum of migration and seed files
+- Commit project and database image
+- Tag image with project name, current git sha and an extra branch tag
 
 ---
 
 ### Flow
 
-- Commit project and database image
+- Tag database image with project name, md5sum of migration and seed files and an extra branch tag
 - Push project and database image
 - Trigger parameterized build of downstream builds passing the SHA through to them
 
