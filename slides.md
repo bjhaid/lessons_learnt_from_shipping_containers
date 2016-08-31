@@ -50,7 +50,7 @@ bjhaid (twitter, github, stackoverflow...)
 
 ---
 
-### A brief about Docker niceities
+### A brief about Docker niceties
 
 - Docker Image/Dockerfile inheritance
 - Docker Image caching
@@ -142,7 +142,7 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
 
 ---
 
-### Successful builds on New(green) vs Old(red) CI (small is better)
+### Successful builds on New(green) vs Old(red) CI (small is better) in minutes
 
 ![inline](graph.png)
 
