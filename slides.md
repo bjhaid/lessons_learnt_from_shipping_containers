@@ -1,10 +1,12 @@
 build-lists: true
 # Lessons learnt from "Shipping" containers.
 
-Abejide Ayodele
-bjhaid (twitter, github)
+Abejide Ayodele (Ayo)
+bjhaid (twitter, github, stackoverflow...)
 
 ---
+
+^ In spring of 2016 we decided to rebuild our CI system and power it with docker
 
 - ~ 2801 builds on average daily
 - Average of 11 containers per build
@@ -56,7 +58,6 @@ bjhaid (twitter, github)
 - Docker Image caching
 - Layer reuse
 - Portability across machines
-- Shareable
 - Widely adopted (big community)
 
 ---
@@ -286,9 +287,11 @@ postgres:
 
 ---
 
+^ Volumizing junit.xml to expose test results in jenkins
+
 ## Tip
 
-Ensure UID/GID of user running docker daemon (docker-compose) is consistent with the user in the container
+If you will use volumes ensure UID/GID of user running docker daemon (docker-compose) is consistent with the user in the container
 
                              OR
 
@@ -302,7 +305,7 @@ command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.crea
 
 ---
 
-`docker-compose rm` or `docker-compose stop` does not rm primary service
+`docker-compose rm` or `docker-compose stop` does not remove or stop primary service
 
 ---
 
