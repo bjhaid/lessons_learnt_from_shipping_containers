@@ -8,9 +8,9 @@ bjhaid (twitter, github, stackoverflow...)
 
 ^ In spring of 2016 we decided to rebuild our CI system and power it with docker
 
-- ~ 2801 builds on average daily
-- Average of 11 containers per build
 - ~ 30811 containers daily
+- Average of 11 containers per build
+- ~ 2801 builds on average daily
 
 ---
 
@@ -41,8 +41,6 @@ bjhaid (twitter, github, stackoverflow...)
 - Make builds _host agnostic_
 
 ---
-
-### The Quest
 
 ![](quest.gif)
 
@@ -150,7 +148,7 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
 
 ---
 
-Objectives achieved but...
+### Objectives achieved but...
 
 ---
 
@@ -158,7 +156,7 @@ Objectives achieved but...
 
 - We were daisy-chaining Makefiles, bash files and docker-compose files
 - Duplicating things across docker compose/Makefiles
-- Which will be a bad UX for developers
+- Which was a bad UX
 
 ---
 
