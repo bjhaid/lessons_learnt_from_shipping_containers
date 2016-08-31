@@ -333,4 +333,4 @@ command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.crea
 
 ### Questions?
 
-^ obligatory plug recruitment
+^ obligatory plug recruitment (Braintree is hiring devops)
