@@ -6,6 +6,12 @@ bjhaid (twitter, github)
 
 ---
 
+- ~ 2801 builds on average daily
+- Average of 11 containers per build
+- ~ 30811 containers daily
+
+---
+
 ### Problems
 
 - Builds were too slow (feedback cycle for developers was too long)
@@ -118,12 +124,14 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
 - Seed database
 - Commit project and database image
 - Tag image with project name, current git sha and an extra branch tag
+ e.g: `hub.braintree.com/bt/sample_app:18155b6bb4384cccd8acf796ecdcd7698b9c7f3c`
 
 ---
 
 ### Flow
 
 - Tag database image with project name, md5sum of migration and seed files and an extra branch tag
+ e.g: `hub.braintree.com/bt/sample_app/data:master`
 - Push project and database image
 - Trigger parameterized build of downstream builds passing the SHA through to them
 
@@ -298,21 +306,6 @@ command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.crea
 
 ---
 
-```yaml
-foo:
-  command: "/bin/bash -c 'sleep 1h'"
-  environment:
-    - REDIS_HOST=redis
-  image: debian:wheezy
-  links:
-    - redis
-  volumes:
-    - /home/pair/bt/jumpman:/home/bt
-redis:
-  image: redis
-```
----
-
 ![fit](docker_compose_not_stopping_root_container.gif)
 
 ---
@@ -327,17 +320,14 @@ redis:
 
 ### Random kernel crashes (xen/docker/linux related)
 
-^ compiling and running an aufs patched linx 3.18.36 made the problems disappear
+^ compiling and running an aufs patched linux 3.18.36 made the problems disappear
 
 ---
 
-### Shoutouts
-
-- James
-- Jaron
-- Jeff
-- Kevin
+### Thanks!
 
 ---
 
-### Come work @ Braintree
+### Questions?
+
+^ obligatory plug recruitment
