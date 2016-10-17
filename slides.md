@@ -6,11 +6,22 @@ bjhaid (twitter, github, stackoverflow...)
 
 ---
 
-^ In spring of 2016 we decided to rebuild our CI system and power it with docker
+### This talk is _not_ about shipping containers to production
 
-- ~ 30811 containers daily
+---
+
+### Powering our CI system with Docker.
+
+---
+
+^ In spring of 2016 we decided to rebuild our CI system and power it with docker
+^ Some statistics to get you excited
+
+### Some stats to get you excited
+
+- ~ 50000 containers daily
 - Average of 11 containers per build
-- ~ 2801 builds on average daily
+- 4000 - 5000 builds daily
 
 ---
 
@@ -160,10 +171,6 @@ rabbit redis  postgres-9.5  postgres-9.1  ruby-2.3            ruby-1.9   java-8 
 
 ---
 
-![fit](duct-tape.JPG)
-
----
-
 ### New Objective
 
 - Replace the daisy chain with something better
@@ -184,7 +191,7 @@ service :postgres do
   image "hub.braintree.com/bt/postgres:custom"
 end
 service :sample_app do
-  image hub.braintree.com/bt/sample_app:master
+  image "hub.braintree.com/bt/sample_app:master"
 end
 job :test => [:sample_app, :postgres] do
   sample_app
@@ -291,16 +298,6 @@ postgres:
 
 If you will use volumes ensure UID/GID of user running docker daemon (docker-compose) is consistent with the user in the container
 
-                             OR
-
-```bash
-groupadd docker -g 918 \
-&& sed -i "s#root:x:0:0:root:/root:/bin/bash#root:x:0:918:root:/root:/bin/bash#g" /etc/passwd
-```
-```yaml
-command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.create, ecto.migrate, test'"
-```
-
 ---
 
 `docker-compose rm` or `docker-compose stop` does not remove or stop primary service
@@ -322,6 +319,10 @@ command: "/bin/bash -c 'umask 0002 && mix do deps.get, clean, compile, ecto.crea
 ### Random kernel crashes (xen/docker/linux related)
 
 ^ compiling and running an aufs patched linux 3.18.36 made the problems disappear
+
+---
+
+### Docker deadlocks
 
 ---
 
